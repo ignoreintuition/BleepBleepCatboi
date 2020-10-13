@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 let gameScene = new Phaser.Scene('Game');
-
+const world = {};
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -20,15 +20,19 @@ const game = new Phaser.Game(config);
 
 gameScene.preload = function () {
     this.load.image('bookcase', '../assets/bookcase.png');
+    this.load.spritesheet('ground', '../assets/ground.png', { frameWidth: 16, frameHeight: 11});
     this.load.spritesheet('pot', '../assets/pot.png', { frameWidth: 20, frameHeight: 26 })
 };
 
 gameScene.create = function () {
-    this.bookcase = this.add.sprite(400,300, 'bookcase');
+    this.physics.world.setBounds(0,0,800,600);
+    this.bookcase = this.physics.add.sprite(400,440, 'bookcase');
     this.bookcase.setScale(4);
 
-    this.pot = this.add.sprite(400, 88, 'pot', 0);
+    this.pot = this.physics.add.sprite(400, 228, 'pot', 0);
     this.pot.setScale(4);
+    this.physics.add.collider(this.bookcase, this.pot);
+    this.bookcase.setCollideWorldBounds(true);
 
     this.anims.create({
         key: 'break',
@@ -43,10 +47,10 @@ gameScene.update = function () {
 };
 
 function pointerMove(pointer, pot) {
-    if (pointer.velocity.x > 100) {
-        pot.x += 5;
-    } else if (pointer.velocity.x < -100) {
-        pot.x -= 5;
+    if (pointer.velocity.x > 200) {
+        pot.x += pointer.velocity.x * 0.05;
+    } else if (pointer.velocity.x < -200) {
+        pot.x += pointer.velocity.x * 0.05;
     }
 }
 
