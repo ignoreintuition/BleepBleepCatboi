@@ -4,6 +4,11 @@ let gameScene = new Phaser.Scene('Game');
 const world = {};
 const config = {
     type: Phaser.AUTO,
+    backgroundColor: '#2d2d2d',
+    parent: 'game',
+    dom: {
+        createContainer: true
+    },
     width: 800,
     height: 600,
     physics: {
@@ -15,6 +20,7 @@ const config = {
     },
     scene: gameScene
 }
+var breakFlag = false;
 
 const game = new Phaser.Game(config);
 
@@ -33,18 +39,23 @@ gameScene.create = function () {
     this.pot.setScale(4);
     this.physics.add.collider(this.bookcase, this.pot);
     this.bookcase.setCollideWorldBounds(true);
+    this.pot.setCollideWorldBounds(true);
 
     this.anims.create({
         key: 'break',
         frames: this.anims.generateFrameNumbers('pot', {start: 0, end: 3}),
-        frameRate: 10,
-        repeat: 1
+        frameRate: 20,
+        repeat: 0
     });
 };
 
 gameScene.update = function () {
     pointerMove(this.input.activePointer, this.pot);
-};
+    if (this.pot.y > 530 && breakFlag === false ){
+        this.pot.play('break', true);
+        breakFlag = true;
+    }
+}
 
 function pointerMove(pointer, pot) {
     if (pointer.velocity.x > 200) {
